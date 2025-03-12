@@ -1,14 +1,61 @@
+# services:
+#   # nginx:
+#   #   image: nginx:latest
+#   #   container_name: nginx_server
+#   #   ports:
+#   #     - "8000:80"
+#   #   volumes:
+#   #     - ./be:/var/www
+#   #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+#   #   depends_on:
+#   #     - backend
+#   database:
+#     image: mysql:8
+#     container_name: um_mysql
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: laravel
+#       MYSQL_USER: onixy
+#       MYSQL_PASSWORD: root
+#     ports:
+#       - "3306:3306"
+#   phpmyadmin:
+#     image: phpmyadmin:latest
+#     ports:
+#       - 9001:80
+#     environment:
+#       - PMA_ARBITRARY=1
+#   backend:
+#     build: ./be
+#     container_name: backend_app
+#     restart: always
+#     working_dir: /var/www
+#     volumes:
+#       - ./be:/var/www
+#     depends_on:
+#       - database
+#     ports:
+#       - "9000:9000"
+
+#   frontend:
+#     build: ./fe
+#     container_name: frontend_app
+#     restart: always
+#     working_dir: /app
+#     volumes:
+#       - ./fe:/app
+#     depends_on:
+#       - backend
+#     ports:
+#       - "5173:5173"
+
+# volumes:
+#   db_data:
+
+version: "3.8"
+
 services:
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: nginx_server
-  #   ports:
-  #     - "8000:80"
-  #   volumes:
-  #     - ./be:/var/www
-  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-  #   depends_on:
-  #     - backend
   database:
     image: mysql:8
     container_name: um_mysql
@@ -20,12 +67,18 @@ services:
       MYSQL_PASSWORD: root
     ports:
       - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
   phpmyadmin:
     image: phpmyadmin:latest
     ports:
-      - 9001:80
+      - "9001:80"
     environment:
       - PMA_ARBITRARY=1
+    depends_on:
+      - database
+
   backend:
     build: ./be
     container_name: backend_app
@@ -48,7 +101,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "5173:5173"
+      - "5173:80"
 
 volumes:
   db_data:

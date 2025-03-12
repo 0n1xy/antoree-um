@@ -8,13 +8,18 @@ pipeline {
     stages {
         stage('Checkout Source Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/usermanagement.git'
+                git branch: 'main', url: 'https://github.com/0n1xy/antoree-um.git'
+            }
+        }
+
+        stage('Stop Existing Containers') {
+            steps {
+                sh "docker-compose stop backend frontend"
             }
         }
 
         stage('Build & Run Docker Containers') {
             steps {
-                sh "${DOCKER_COMPOSE} down"
                 sh "${DOCKER_COMPOSE} build --no-cache"
                 sh "${DOCKER_COMPOSE} up -d"
             }
@@ -22,7 +27,14 @@ pipeline {
 
         stage('Run Backend Migrations') {
             steps {
-                sh "docker exec backend_app php artisan migrate --seed"
+                sh '''
+                echo "🔄 Chờ MySQL khởi động..."
+                while ! docker exec backend_app mysqladmin ping -h"database" --silent; do
+                    sleep 2
+                done
+                echo "✅ MySQL đã sẵn sàng!"
+                docker exec backend_app php artisan migrate --seed
+                '''
             }
         }
 
