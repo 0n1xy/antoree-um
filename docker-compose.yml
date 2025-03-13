@@ -91,17 +91,17 @@ services:
     ports:
       - "9000:9000"
 
-  frontend:
-    build: ./fe
-    container_name: frontend_app
-    restart: always
-    working_dir: /app
-    volumes:
-      - ./fe:/app
-    depends_on:
-      - backend
-    ports:
-      - "5173:80"
+  # frontend:
+  #   build: ./fe
+  #   container_name: frontend_app
+  #   restart: always
+  #   working_dir: /app
+  #   volumes:
+  #     - ./fe:/app
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "5173:80"
 
 volumes:
   db_data:
